@@ -1,0 +1,27 @@
+name: lab2-web-lite
+
+services:
+  backend_service:
+    image: dcr.deev.su/deevev/lab2-backend:1.0.0
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --no-input &&
+             gunicorn lab1.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - static_volume:/app/staticfiles
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  nginx_service:
+    image: dcr.deev.su/deevev/lab2-nginx:1.0.0
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/staticfiles
+    depends_on:
+      - backend_service
+    restart: unless-stopped
+
+volumes:
+  static_volume:
