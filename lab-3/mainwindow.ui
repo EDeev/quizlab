@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>620</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Quiz Client — ЛР3</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>8</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="buttonLayout">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="btnGetAll">
+        <property name="minimumSize"><size><width>0</width><height>48</height></size></property>
+        <property name="text"><string>Все тесты
+GET /api/quiz/</string></property>
+        <property name="styleSheet"><string>QPushButton { background:#2d4a6b; color:#bfdbfe; border-radius:6px; font-weight:bold; border:1px solid #3b5f8a; }
+QPushButton:hover { background:#3b5f8a; }</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnGetById">
+        <property name="minimumSize"><size><width>0</width><height>48</height></size></property>
+        <property name="text"><string>По ID
+GET /api/quiz/:id/</string></property>
+        <property name="styleSheet"><string>QPushButton { background:#2d4a6b; color:#bfdbfe; border-radius:6px; font-weight:bold; border:1px solid #3b5f8a; }
+QPushButton:hover { background:#3b5f8a; }</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnCreate">
+        <property name="minimumSize"><size><width>0</width><height>48</height></size></property>
+        <property name="text"><string>Создать
+POST /api/quiz/</string></property>
+        <property name="styleSheet"><string>QPushButton { background:#1a3d2b; color:#86efac; border-radius:6px; font-weight:bold; border:1px solid #256040; }
+QPushButton:hover { background:#256040; }</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnUpdate">
+        <property name="minimumSize"><size><width>0</width><height>48</height></size></property>
+        <property name="text"><string>Обновить
+PUT /api/quiz/:id/</string></property>
+        <property name="styleSheet"><string>QPushButton { background:#3d2e0a; color:#fcd34d; border-radius:6px; font-weight:bold; border:1px solid #5a4210; }
+QPushButton:hover { background:#5a4210; }</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnDelete">
+        <property name="minimumSize"><size><width>0</width><height>48</height></size></property>
+        <property name="text"><string>Удалить
+DELETE /api/quiz/:id/</string></property>
+        <property name="styleSheet"><string>QPushButton { background:#4a1a1a; color:#fca5a5; border-radius:6px; font-weight:bold; border:1px solid #6b2424; }
+QPushButton:hover { background:#6b2424; }</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnClear">
+        <property name="minimumSize"><size><width>0</width><height>48</height></size></property>
+        <property name="text"><string>Очистить</string></property>
+        <property name="styleSheet"><string>QPushButton { background:#2d3748; color:#9ca3af; border-radius:6px; border:1px solid #4b5563; font-weight:bold; }
+QPushButton:hover { background:#374151; }</string></property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="lblStatus">
+      <property name="text"><string>&lt;b&gt;Результат:&lt;/b&gt;</string></property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex"><number>0</number></property>
+      <property name="tabPosition"><enum>QTabWidget::TabPosition::North</enum></property>
+      <property name="tabBarAutoHide"><bool>false</bool></property>
+      <property name="styleSheet"><string>QTabWidget::pane { border: 1px solid #374151; border-radius: 0 4px 4px 4px; }
+QTabBar::tab { background:#1f2937; color:#9ca3af; padding:6px 20px; border: 1px solid #374151; border-bottom: none; border-radius: 4px 4px 0 0; font-weight:bold; }
+QTabBar::tab:selected { background:#111827; color:#f9fafb; border-color:#4b5563; }
+QTabBar::tab:hover { background:#374151; color:#e5e7eb; }</string></property>
+      <widget class="QWidget" name="pageTable">
+       <attribute name="title"><string>Таблица</string></attribute>
+       <layout class="QVBoxLayout" name="pageTableLayout">
+        <property name="spacing"><number>0</number></property>
+        <property name="leftMargin"><number>0</number></property>
+        <property name="topMargin"><number>0</number></property>
+        <property name="rightMargin"><number>0</number></property>
+        <property name="bottomMargin"><number>0</number></property>
+        <item>
+         <widget class="QTableWidget" name="tableWidget">
+          <property name="selectionBehavior"><enum>QAbstractItemView::SelectionBehavior::SelectRows</enum></property>
+          <property name="selectionMode"><enum>QAbstractItemView::SelectionMode::SingleSelection</enum></property>
+          <property name="editTriggers"><set>QAbstractItemView::EditTrigger::NoEditTriggers</set></property>
+          <property name="wordWrap"><bool>true</bool></property>
+          <property name="styleSheet"><string>QTableWidget { gridline-color: #374151; border: none; color: #f9fafb; background: #111827; alternate-background-color: #1f2937; }
+QHeaderView::section { background: #1f2937; color: #e5e7eb; font-weight: bold; padding: 6px 4px; border: none; border-bottom: 2px solid #4b5563; border-right: 1px solid #374151; }
+QScrollBar:vertical { background: #1f2937; width: 10px; border-radius: 5px; }
+QScrollBar::handle:vertical { background: #4b5563; border-radius: 5px; min-height: 20px; }
+QScrollBar::handle:vertical:hover { background: #6b7280; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0px; }
+QScrollBar:horizontal { background: #1f2937; height: 10px; border-radius: 5px; }
+QScrollBar::handle:horizontal { background: #4b5563; border-radius: 5px; min-width: 20px; }
+QScrollBar::handle:horizontal:hover { background: #6b7280; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0px; }</string></property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="pageText">
+       <attribute name="title"><string>Текст</string></attribute>
+       <layout class="QVBoxLayout" name="pageTextLayout">
+        <property name="spacing"><number>0</number></property>
+        <property name="leftMargin"><number>0</number></property>
+        <property name="topMargin"><number>0</number></property>
+        <property name="rightMargin"><number>0</number></property>
+        <property name="bottomMargin"><number>0</number></property>
+        <item>
+         <widget class="QTextEdit" name="outputEdit">
+          <property name="readOnly"><bool>true</bool></property>
+          <property name="font">
+           <font>
+            <family>Courier New</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect><x>0</x><y>0</y><width>1000</width><height>21</height></rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

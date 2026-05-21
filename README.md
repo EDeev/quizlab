@@ -38,3 +38,43 @@ docker compose up
 ```
 
 Перед запуском `web_lite` и `web_pg` нужен файл `.env` — пример в `lab-2/local/.env`.
+
+---
+
+## Лабораторная работа 3 — Qt GUI клиент
+
+**Расположение:** `lab-3/`
+
+Qt6-приложение на C++ — графический клиент к REST API из Лаб-1.  
+Демонстрирует паттерны проектирования **Singleton** и **Adapter**.
+
+**Стек:** Qt 6, C++17, QNetworkAccessManager, CMake
+
+**Паттерны:**
+- **Singleton** — `ApiClient` существует в единственном экземпляре (Meyers' Singleton)
+- **Adapter** — `QuizJsonAdapter` конвертирует `QJsonObject` → `Quiz`
+
+**5 HTTP-методов:**
+
+| Кнопка | Метод | Endpoint |
+|--------|-------|----------|
+| Все тесты | GET | `/api/quiz/` |
+| По ID | GET | `/api/quiz/:id/` |
+| Создать | POST | `/api/quiz/` |
+| Обновить | PUT | `/api/quiz/:id/` |
+| Удалить | DELETE | `/api/quiz/:id/` |
+
+**Сборка:**
+```bash
+cd lab-3
+cmake -B build
+cmake --build build
+```
+
+**Запуск бэкенда перед использованием:**
+```bash
+cd lab-2/web_lite
+docker compose up
+```
+
+Приложение подключается к `http://localhost:80`.
