@@ -1,0 +1,55 @@
+name: lab2-caddy
+
+secrets:
+  lab2_crt:
+    file: ./certs/lab2.crt
+  lab2_key:
+    file: ./certs/lab2.key
+
+services:
+  postgres_service:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend_service:
+    build: ./backend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py shell -c 'from quiz.gentestdata import gentestdata; gentestdata()' &&
+             python manage.py collectstatic --no-input &&
+             gunicorn lab1.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - static_volume:/app/staticfiles
+    env_file:
+      - .env
+    depends_on:
+      postgres_service:
+        condition: service_healthy
+    restart: unless-stopped
+
+  caddy_service:
+    image: caddy:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - static_volume:/staticfiles:ro
+    secrets:
+      - lab2_crt
+      - lab2_key
+    depends_on:
+      - backend_service
+    restart: unless-stopped
+
+volumes:
+  static_volume:
+  postgres_data:

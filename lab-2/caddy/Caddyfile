@@ -1,0 +1,24 @@
+{
+    auto_https off
+}
+
+:80 {
+    redir https://{host}{uri} permanent
+}
+
+:443 {
+    tls /run/secrets/lab2_crt /run/secrets/lab2_key
+
+    handle_path /static/* {
+        root * /staticfiles
+        file_server
+    }
+
+    handle /admin/* {
+        reverse_proxy backend_service:8000
+    }
+
+    handle /api/* {
+        reverse_proxy backend_service:8000
+    }
+}
