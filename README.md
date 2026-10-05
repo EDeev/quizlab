@@ -1,80 +1,103 @@
-# Лабораторные работы — Деев
+# Quiz API: Django → Docker → Qt
 
-## Лабораторная работа 1 — Django REST API
+**Русский** · [English](README.en.md)
 
-**Расположение:** `lab-1/`
+Три лабораторные по архитектуре программных систем, построенные вокруг одного приложения. Сначала
+REST API викторин на Django REST Framework, затем то же API в Docker в четырёх вариантах развёртывания,
+затем десктопный клиент на C++/Qt с паттернами Singleton и Adapter.
 
-Django-приложение с REST API для викторины. PostgreSQL, без Docker.
+**Статус:** учебный проект («Архитектура программных систем», Московский Политех, группа 241-327,
+весна 2026), завершён
 
-**Запуск:**
-```bash
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
+![Qt-клиент со списком тестов](docs/screenshots/client.png)
+
+**Стек:** Python · Django · Django REST Framework · PostgreSQL · Docker Compose · nginx · Caddy ·
+C++17 · Qt 6 (Widgets, Network) · CMake
+
+## Лабораторные
+
+| | Что сделано | Папка |
+|---|---|---|
+| 1 | REST API: модель `Quiz`, сериализатор, `ModelViewSet`, генератор тестовых данных на Faker, PostgreSQL | [`lab-1/`](lab-1) |
+| 2 | API в контейнерах: gunicorn за nginx, статика из общего тома, свои образы в реестре `dcr.deev.su` | [`lab-2/`](lab-2) |
+| 3 | Десктопный клиент к API: пять HTTP-методов, таблица и текстовый вид, Singleton и Adapter | [`lab-3/`](lab-3) |
+
+Варианты развёртывания во второй лабораторной:
+
+| Папка | Образы | PostgreSQL |
+|---|---|---|
+| `local/` | собираются из исходников | в контейнере |
+| `web_pg/` | готовые из `dcr.deev.su/deevev/lab2-*` | в контейнере |
+| `web_lite/` | готовые из `dcr.deev.su/deevev/lab2-*` | внешний |
+| `caddy/` | собираются из исходников, Caddy вместо nginx, HTTPS с самоподписанным сертификатом | в контейнере |
+
+## Как устроено
+
+```mermaid
+flowchart LR
+    Q[Qt-клиент<br/>ApiClient + QuizJsonAdapter] -->|HTTP JSON| N[nginx или Caddy]
+    N -->|/api/, /admin/| G[gunicorn + Django REST Framework]
+    N -->|/static/| S[(том со статикой)]
+    G --> P[(PostgreSQL)]
 ```
 
----
+API: `GET /api/quiz/`, `GET /api/quiz/<id>/`, `POST /api/quiz/`, `PUT /api/quiz/<id>/`,
+`DELETE /api/quiz/<id>/`. Поля теста: название, описание, автор, лимит времени в минутах, опубликован
+ли, дата создания.
 
-## Лабораторная работа 2 — Docker
+В клиенте `ApiClient` — синглтон Мейерса: одно соединение `QNetworkAccessManager` на всё приложение.
+`QuizJsonAdapter` реализует интерфейс `IQuizAdapter` и переводит `QJsonObject` в `Quiz`, поэтому окно
+работает с классом предметной области, а не с JSON.
 
-**Расположение:** `lab-2/`
+## Запуск
 
-То же приложение, упакованное в Docker-контейнеры. Три варианта запуска:
+API в Docker (сборка из исходников, PostgreSQL в контейнере, 100 тестов генерируются при старте):
 
-| Папка | Описание |
-|-------|----------|
-| `local/` | Сборка образов из исходников, PostgreSQL в контейнере |
-| `web_lite/` | Готовые образы с `dcr.deev.su`, PostgreSQL внешний |
-| `web_pg/` | Готовые образы с `dcr.deev.su`, PostgreSQL в контейнере |
-
-**Образы на registry:**
-- `dcr.deev.su/deevev/lab2-backend:1.0.0`
-- `dcr.deev.su/deevev/lab2-nginx:1.0.0`
-
-**Запуск (любой из вариантов):**
 ```bash
-cd lab-2/local       # или web_lite / web_pg
-docker compose up
+cd lab-2/local
+cp .env.example .env      # задайте пароль БД и DJANGO_SECRET_KEY
+docker compose up -d      # API на http://localhost/api/quiz/
 ```
 
-Перед запуском `web_lite` и `web_pg` нужен файл `.env` — пример в `lab-2/local/.env`.
+Остальные варианты запускаются так же из своих папок. Для `caddy/` сначала выполните `sh gen-cert.sh`,
+сайт откроется на `https://localhost`.
 
----
+Клиент (нужны Qt 6 и CMake):
 
-## Лабораторная работа 3 — Qt GUI клиент
-
-**Расположение:** `lab-3/`
-
-Qt6-приложение на C++ — графический клиент к REST API из Лаб-1.  
-Демонстрирует паттерны проектирования **Singleton** и **Adapter**.
-
-**Стек:** Qt 6, C++17, QNetworkAccessManager, CMake
-
-**Паттерны:**
-- **Singleton** — `ApiClient` существует в единственном экземпляре (Meyers' Singleton)
-- **Adapter** — `QuizJsonAdapter` конвертирует `QJsonObject` → `Quiz`
-
-**5 HTTP-методов:**
-
-| Кнопка | Метод | Endpoint |
-|--------|-------|----------|
-| Все тесты | GET | `/api/quiz/` |
-| По ID | GET | `/api/quiz/:id/` |
-| Создать | POST | `/api/quiz/` |
-| Обновить | PUT | `/api/quiz/:id/` |
-| Удалить | DELETE | `/api/quiz/:id/` |
-
-**Сборка:**
 ```bash
 cd lab-3
-cmake -B build
-cmake --build build
+cmake -B build && cmake --build build
+./build/lab-3             # API по умолчанию — http://localhost:80, другой адрес: QUIZ_API_URL=http://host:port
 ```
 
-**Запуск бэкенда перед использованием:**
-```bash
-cd lab-2/web_lite
-docker compose up
-```
+Первая лабораторная без Docker: PostgreSQL, затем `pip install -r lab-1/requirements.txt`,
+`python manage.py migrate`, `python manage.py runserver`. Подключение задаётся переменными `POSTGRES_*`,
+настройки Django — `DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, `DJANGO_ALLOWED_HOSTS`.
 
-Приложение подключается к `http://localhost:80`.
+## Как выглядит
+
+| Браузерный API DRF | Текстовый вид клиента |
+|---|---|
+| ![API](docs/screenshots/api.png) | ![Текстовый вид](docs/screenshots/client-text.png) |
+
+## Разработка
+
+Каждая лабораторная — самостоятельная папка, поэтому Django-проект повторяется в `lab-1/`,
+`lab-2/local/backend/` и `lab-2/caddy/backend/`. Файлы `http.restbook` — запросы к API для расширения
+REST Book в VS Code.
+
+## Лицензия
+
+Учебный проект («Архитектура программных систем», Московский Политех, 2026). Код открыт для изучения,
+отдельной лицензии нет.
+
+## Автор
+
+**Деев Егор Викторович** — [GitHub](https://github.com/EDeev) · [Telegram](https://t.me/DeevEgor) · [egor@deev.space](mailto:egor@deev.space)
+
+---
+
+<div align="center">
+  <sub>⭐ Если проект оказался полезным, поставьте звёздочку!</sub>
+  <p><sub>Сделано с ❤️ — <a href="https://deev.space">deev.space</a></sub></p>
+</div>
