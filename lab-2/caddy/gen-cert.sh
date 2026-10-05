@@ -1,17 +1,19 @@
 #!/bin/sh
 
 set -e
+# в Git Bash на Windows не даём MSYS превратить "/CN=..." в путь
+export MSYS_NO_PATHCONV=1
 mkdir -p certs
 
 # 1. Генерация корневого сертификата root.crt и его rsa-ключа root.key 
 openssl req -x509 -new -nodes -newkey rsa:2048 \
   -keyout certs/root.key -days 3650 \
-  -out certs/root.crt -subj "//CN=Root CA"
+  -out certs/root.crt -subj "/CN=Root CA"
 
 # 2.  Генерация  rsa-ключа  для  сертификата  сервера  и  вспомогательного  CSR-файла (Certificate Signing Request) на основе этого ключа
 openssl req -new -nodes -newkey rsa:2048 \
   -keyout certs/lab2.key -out certs/lab2.csr \
-  -subj "//CN=lab2 server cert"
+  -subj "/CN=lab2 server cert"
 
 # 3.  Собственно,  генерация  сертификата  сервера *.crt  из  *.csr-файла, сгенерированного выше
 echo "subjectAltName=DNS:localhost,IP:127.0.0.1" > certs/extfile.txt
