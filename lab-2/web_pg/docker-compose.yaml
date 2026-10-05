@@ -2,7 +2,7 @@ name: lab2-web-pg
 
 services:
   postgres_service:
-    image: postgres:alpine
+    image: postgres:16-alpine
     env_file:
       - .env
     healthcheck:

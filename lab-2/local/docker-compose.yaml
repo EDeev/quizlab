@@ -3,7 +3,7 @@ name: lab2-local
 services:
   postgres_service:
     # https://hub.docker.com/_/postgres
-    image: postgres:alpine
+    image: postgres:16-alpine
     env_file:
       - .env
     healthcheck:
