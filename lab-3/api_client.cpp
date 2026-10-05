@@ -19,7 +19,8 @@ ApiClient::ApiClient(QObject *parent)
     : QObject(parent)
     , m_manager(new QNetworkAccessManager(this))
     , m_adapter(new QuizJsonAdapter())
-    , m_baseUrl("http://localhost:80")
+    // адрес API можно переопределить переменной окружения QUIZ_API_URL
+    , m_baseUrl(qEnvironmentVariable("QUIZ_API_URL", "http://localhost:80"))
 {
 }
 
