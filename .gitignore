@@ -1,0 +1,7 @@
+.env
+certs/
+__pycache__/
+*.pyc
+staticfiles/
+build/
+*.user
