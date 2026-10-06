@@ -35,6 +35,16 @@ jobs:
           choco install innosetup --no-progress -y | Out-Null
           $v = if ("${{ github.ref_type }}" -eq "tag") { "${{ github.ref_name }}".TrimStart("v") } else { "0.0.0" }
           & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" /Q "/DAppVersion=$v" lab-3/installer/quizlab-client.iss
+      - name: Проверка — установщик ставит программу, она запускается
+        run: |
+          Start-Process -Wait -FilePath .\quizlab-client-setup.exe -ArgumentList "/VERYSILENT","/CURRENTUSER","/SUPPRESSMSGBOXES","/DIR=$env:RUNNER_TEMP\qc"
+          $exe = "$env:RUNNER_TEMP\qc\quizlab-client.exe"
+          if (-not (Test-Path $exe)) { throw "после установки нет quizlab-client.exe" }
+          $p = Start-Process -FilePath $exe -ArgumentList "-platform","offscreen" -PassThru
+          Start-Sleep -Seconds 5
+          if ($p.HasExited) { throw "клиент завершился с кодом $($p.ExitCode)" }
+          Stop-Process -Id $p.Id -Force
+          "клиент установлен и работает"
       - uses: actions/upload-artifact@v4
         with:
           name: windows

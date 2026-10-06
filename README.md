@@ -30,7 +30,7 @@ C++17 · Qt 6 (Widgets, Network) · CMake
 | Папка | Образы | PostgreSQL |
 |---|---|---|
 | `local/` | собираются из исходников | в контейнере |
-| `web_pg/` | готовые из `git.deev.su/deevev/quizlab` | в контейнере |
+| `web_pg/` | готовые из `git.deev.su/deevev/quizlab` (то же — `ghcr.io/edeev/quizlab`) | в контейнере |
 | `web_lite/` | готовые из `git.deev.su/deevev/quizlab` | внешний |
 | `caddy/` | собираются из исходников, Caddy вместо nginx, HTTPS с самоподписанным сертификатом | в контейнере |
 
@@ -65,8 +65,9 @@ docker compose up -d      # API на http://localhost/api/quiz/
 Остальные варианты запускаются так же из своих папок. Для `caddy/` сначала выполните `sh gen-cert.sh`,
 сайт откроется на `https://localhost`.
 
-Готовый клиент — в [релизах](https://github.com/EDeev/quizlab/releases/latest): `quizlab-client-windows-x64.zip`
-(распакуйте и запустите `quizlab-client.exe`) и `quizlab-client-linux-x86_64.AppImage` (`chmod +x` и запустить).
+Готовый клиент — в [релизах](https://github.com/EDeev/quizlab/releases/latest): `quizlab-client-setup.exe` — установщик
+для Windows (ярлык в меню «Пуск»), `quizlab-client-windows-x64.zip` — то же без установки (распакуйте и запустите
+`quizlab-client.exe`) и `quizlab-client-linux-x86_64.AppImage` (`chmod +x` и запустить).
 
 Сборка клиента из исходников (нужны Qt 6 и CMake):
 

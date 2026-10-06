@@ -30,7 +30,7 @@ Deployment options in the second lab:
 | Folder | Images | PostgreSQL |
 |---|---|---|
 | `local/` | built from source | in a container |
-| `web_pg/` | prebuilt `git.deev.su/deevev/quizlab` | in a container |
+| `web_pg/` | prebuilt `git.deev.su/deevev/quizlab` (same as `ghcr.io/edeev/quizlab`) | in a container |
 | `web_lite/` | prebuilt `git.deev.su/deevev/quizlab` | external |
 | `caddy/` | built from source, Caddy instead of nginx, HTTPS with a self-signed certificate | in a container |
 
@@ -65,8 +65,9 @@ docker compose up -d      # API at http://localhost/api/quiz/
 The other options run the same way from their folders. For `caddy/`, run `sh gen-cert.sh` first; the site
 opens at `https://localhost`.
 
-A prebuilt client is in the [releases](https://github.com/EDeev/quizlab/releases/latest): `quizlab-client-windows-x64.zip`
-(unpack and run `quizlab-client.exe`) and `quizlab-client-linux-x86_64.AppImage` (`chmod +x` and run).
+A prebuilt client is in the [releases](https://github.com/EDeev/quizlab/releases/latest): `quizlab-client-setup.exe` — a
+Windows installer (Start menu shortcut), `quizlab-client-windows-x64.zip` — the same without installing (unpack and run
+`quizlab-client.exe`), and `quizlab-client-linux-x86_64.AppImage` (`chmod +x` and run).
 
 Building the client from source (needs Qt 6 and CMake):
 
