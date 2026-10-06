@@ -2,6 +2,9 @@
 
 **Русский** · [English](README.en.md)
 
+[![CI](https://github.com/EDeev/quizlab/actions/workflows/ci.yml/badge.svg)](https://github.com/EDeev/quizlab/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/EDeev/quizlab)](https://github.com/EDeev/quizlab/releases)
+
 Три лабораторные по архитектуре программных систем, построенные вокруг одного приложения. Сначала
 REST API викторин на Django REST Framework, затем то же API в Docker в четырёх вариантах развёртывания,
 затем десктопный клиент на C++/Qt с паттернами Singleton и Adapter.
@@ -62,7 +65,10 @@ docker compose up -d      # API на http://localhost/api/quiz/
 Остальные варианты запускаются так же из своих папок. Для `caddy/` сначала выполните `sh gen-cert.sh`,
 сайт откроется на `https://localhost`.
 
-Клиент (нужны Qt 6 и CMake):
+Готовый клиент — в [релизах](https://github.com/EDeev/quizlab/releases/latest): `quizlab-client-windows-x64.zip`
+(распакуйте и запустите `quizlab-client.exe`) и `quizlab-client-linux-x86_64.AppImage` (`chmod +x` и запустить).
+
+Сборка клиента из исходников (нужны Qt 6 и CMake):
 
 ```bash
 cd lab-3
