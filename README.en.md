@@ -19,7 +19,7 @@ C++17 · Qt 6 (Widgets, Network) · CMake
 | | What was built | Folder |
 |---|---|---|
 | 1 | REST API: `Quiz` model, serializer, `ModelViewSet`, Faker test data generator, PostgreSQL | [`lab-1/`](lab-1) |
-| 2 | The API in containers: gunicorn behind nginx, static files from a shared volume, own images in the `dcr.deev.su` registry | [`lab-2/`](lab-2) |
+| 2 | The API in containers: gunicorn behind nginx, static files from a shared volume, own images in the `git.deev.su` registry | [`lab-2/`](lab-2) |
 | 3 | Desktop client for the API: five HTTP methods, table and text views, Singleton and Adapter | [`lab-3/`](lab-3) |
 
 Deployment options in the second lab:
@@ -27,8 +27,8 @@ Deployment options in the second lab:
 | Folder | Images | PostgreSQL |
 |---|---|---|
 | `local/` | built from source | in a container |
-| `web_pg/` | prebuilt `dcr.deev.su/deevev/lab2-*` | in a container |
-| `web_lite/` | prebuilt `dcr.deev.su/deevev/lab2-*` | external |
+| `web_pg/` | prebuilt `git.deev.su/deevev/quizlab` | in a container |
+| `web_lite/` | prebuilt `git.deev.su/deevev/quizlab` | external |
 | `caddy/` | built from source, Caddy instead of nginx, HTTPS with a self-signed certificate | in a container |
 
 ## How it works

@@ -2,7 +2,7 @@ name: lab2-web-lite
 
 services:
   backend_service:
-    image: dcr.deev.su/deevev/lab2-backend:1.0.0
+    image: git.deev.su/deevev/quizlab:backend-1.0.0
     command: >
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --no-input &&
@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
 
   nginx_service:
-    image: dcr.deev.su/deevev/lab2-nginx:1.0.0
+    image: git.deev.su/deevev/quizlab:nginx-1.0.0
     ports:
       - "80:80"
     volumes:

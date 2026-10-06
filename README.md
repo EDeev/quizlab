@@ -19,7 +19,7 @@ C++17 · Qt 6 (Widgets, Network) · CMake
 | | Что сделано | Папка |
 |---|---|---|
 | 1 | REST API: модель `Quiz`, сериализатор, `ModelViewSet`, генератор тестовых данных на Faker, PostgreSQL | [`lab-1/`](lab-1) |
-| 2 | API в контейнерах: gunicorn за nginx, статика из общего тома, свои образы в реестре `dcr.deev.su` | [`lab-2/`](lab-2) |
+| 2 | API в контейнерах: gunicorn за nginx, статика из общего тома, свои образы в реестре `git.deev.su` | [`lab-2/`](lab-2) |
 | 3 | Десктопный клиент к API: пять HTTP-методов, таблица и текстовый вид, Singleton и Adapter | [`lab-3/`](lab-3) |
 
 Варианты развёртывания во второй лабораторной:
@@ -27,8 +27,8 @@ C++17 · Qt 6 (Widgets, Network) · CMake
 | Папка | Образы | PostgreSQL |
 |---|---|---|
 | `local/` | собираются из исходников | в контейнере |
-| `web_pg/` | готовые из `dcr.deev.su/deevev/lab2-*` | в контейнере |
-| `web_lite/` | готовые из `dcr.deev.su/deevev/lab2-*` | внешний |
+| `web_pg/` | готовые из `git.deev.su/deevev/quizlab` | в контейнере |
+| `web_lite/` | готовые из `git.deev.su/deevev/quizlab` | внешний |
 | `caddy/` | собираются из исходников, Caddy вместо nginx, HTTPS с самоподписанным сертификатом | в контейнере |
 
 ## Как устроено
