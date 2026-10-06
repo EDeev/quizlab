@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  api:
+    name: API в Docker (lab-2/local)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Сборка и запуск
+        working-directory: lab-2/local
+        run: |
+          cp .env.example .env
+          docker compose up -d --build --wait postgres_service
+          docker compose up -d --build
+      - name: API отдаёт сгенерированные тесты
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost/api/quiz/ -o quiz.json && break
+            sleep 3
+          done
+          python3 -c "
+          import json
+          d = json.load(open('quiz.json'))
+          items = d['results'] if isinstance(d, dict) else d
+          assert items, 'список тестов пуст'
+          print('тестов:', d.get('count', len(items)) if isinstance(d, dict) else len(items))"
+      - name: Журнал при ошибке
+        if: failure()
+        working-directory: lab-2/local
+        run: docker compose logs --tail 50
+
+  images:
+    name: Образы caddy/ собираются
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - working-directory: lab-2/caddy
+        run: cp .env.example .env && docker compose build
+
+  client:
+    name: Qt-клиент (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.*"
+          cache: true
+      - name: Зависимости сборки (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libgl1-mesa-dev libxkbcommon-dev
+      - name: Сборка
+        working-directory: lab-3
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release

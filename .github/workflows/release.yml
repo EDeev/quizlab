@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  windows:
+    name: Qt-клиент для Windows
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.*"
+          cache: true
+      - name: Сборка
+        working-directory: lab-3
+        run: |
+          cmake -B build
+          cmake --build build --config Release
+      - name: Программа с библиотеками Qt
+        run: |
+          New-Item -ItemType Directory dist/quizlab-client | Out-Null
+          Copy-Item lab-3/build/Release/lab-3.exe dist/quizlab-client/quizlab-client.exe
+          windeployqt --release --no-translations --no-system-d3d-compiler --no-opengl-sw dist/quizlab-client/quizlab-client.exe
+          Compress-Archive -Path dist/quizlab-client -DestinationPath quizlab-client-windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: quizlab-client-windows-x64.zip
+      - name: Файл в релиз
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.ref_name }}" quizlab-client-windows-x64.zip --clobber
+
+  linux:
+    name: Qt-клиент для Linux (AppImage)
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.*"
+          cache: true
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq libgl1-mesa-dev libxkbcommon-dev libxcb-cursor0
+      - name: Сборка
+        working-directory: lab-3
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+      - name: AppImage
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+          OUTPUT: quizlab-client-linux-x86_64.AppImage
+        run: |
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy*.AppImage
+          mkdir -p appdir
+          cp lab-3/build/lab-3 quizlab-client
+          cp lab-3/icons/app.svg quizlab-client.svg
+          printf '[Desktop Entry]\nType=Application\nName=Quiz Client\nExec=quizlab-client\nIcon=quizlab-client\nCategories=Education;\n' > quizlab-client.desktop
+          export QMAKE=$(which qmake)
+          ./linuxdeploy-x86_64.AppImage --appdir appdir -e quizlab-client -d quizlab-client.desktop -i quizlab-client.svg --plugin qt --output appimage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: quizlab-client-linux-x86_64.AppImage
+      - name: Файл в релиз
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.ref_name }}" quizlab-client-linux-x86_64.AppImage --clobber
