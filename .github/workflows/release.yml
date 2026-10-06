@@ -27,6 +27,8 @@ jobs:
           New-Item -ItemType Directory dist/quizlab-client | Out-Null
           Copy-Item lab-3/build/Release/lab-3.exe dist/quizlab-client/quizlab-client.exe
           windeployqt --release --no-translations --no-system-d3d-compiler --no-opengl-sw dist/quizlab-client/quizlab-client.exe
+          # рантайм MSVC рядом с программой — чтобы не требовался Visual C++ Redistributable
+          foreach ($d in "msvcp140.dll","msvcp140_1.dll","vcruntime140.dll","vcruntime140_1.dll") { Copy-Item "$env:WINDIR\System32\$d" dist/quizlab-client/ }
           Compress-Archive -Path dist/quizlab-client -DestinationPath quizlab-client-windows-x64.zip
       - uses: actions/upload-artifact@v4
         with:
