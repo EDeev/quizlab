@@ -71,6 +71,14 @@ jobs:
           printf '[Desktop Entry]\nType=Application\nName=Quiz Client\nExec=quizlab-client\nIcon=quizlab-client\nCategories=Education;\n' > quizlab-client.desktop
           export QMAKE=$(which qmake)
           ./linuxdeploy-x86_64.AppImage --appdir appdir -e quizlab-client -d quizlab-client.desktop -i quizlab-client.svg --plugin qt --output appimage
+      - name: Проверка — AppImage запускается и работает 5 секунд
+        run: |
+          sudo apt-get install -y -qq xvfb
+          xvfb-run -a ./quizlab-client-linux-x86_64.AppImage --appimage-extract-and-run > run.log 2>&1 &
+          sleep 5
+          cat run.log
+          pgrep -f quizlab-client > /dev/null || { echo "клиент завершился"; exit 1; }
+          echo "клиент работает"
       - uses: actions/upload-artifact@v4
         with:
           name: linux
